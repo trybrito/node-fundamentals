@@ -1,7 +1,8 @@
 import http from 'node:http'
-import { Database } from './database.js'
+import { Database } from './database.ts'
 import { randomUUID } from 'node:crypto'
 import { json } from './middlewares/json.ts'
+import { routes } from './routes.ts'
 
 type Users = {
   id: number
@@ -9,37 +10,20 @@ type Users = {
   email: string
 }[]
 
-const database = new Database()
-
 const server = http.createServer(async (req, res) => {
   const { method, url } = req
 
   await json(req, res)
 
-  if (method === 'GET' && url === '/users') {
-    const users = database.select('users')
+  const route = routes.find((route) => {
+    return route.method === method && route.path.test(url!)
+  })
 
-    return res
-      .setHeader('Content-type', 'application/json')
-      .end(JSON.stringify(users))
-  }
+  if (route) {
+    const routeParams = url?.match(route.path)
+    req.params = { ...routeParams?.groups }
 
-  if (method === 'POST' && url === '/users') {
-    if (req.body) {
-      const { name, email } = req.body
-
-      const user = {
-        id: randomUUID(),
-        name,
-        email,
-      }
-
-      database.insert('users', user)
-
-      return res.writeHead(201).end()
-    }
-
-    return res.writeHead(400).end()
+    return route.handler(req, res)
   }
 
   return res.writeHead(404).end()

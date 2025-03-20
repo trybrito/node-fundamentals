@@ -1,6 +1,6 @@
-import http from 'node:http'
+import { IncomingMessage, ServerResponse } from 'node:http'
 
-export async function json(req: http.IncomingMessage, _: http.ServerResponse) {
+export async function json(req: IncomingMessage, _: ServerResponse) {
   const buffers = []
 
   for await (let chunk of req) {
