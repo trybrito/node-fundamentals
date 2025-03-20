@@ -3,7 +3,7 @@ import fs from 'node:fs/promises'
 const databasePath = new URL('../db.json', import.meta.url)
 
 type UserType = {
-  id: string
+  [key: string]: string
   name: string
   email: string
 }
@@ -27,8 +27,16 @@ export class Database {
     fs.writeFile(databasePath, JSON.stringify(this.#database))
   }
 
-  select(table: string) {
-    const data = this.#database[table] ?? []
+  select(table: string, search: Record<string, string> | null) {
+    let data = this.#database[table] ?? []
+
+    if (search) {
+      data = data.filter((row) => {
+        return Object.entries(search).some(([key, value]) => {
+          return row[key].includes(value)
+        })
+      })
+    }
 
     return data
   }

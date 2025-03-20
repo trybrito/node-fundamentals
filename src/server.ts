@@ -1,14 +1,7 @@
 import http from 'node:http'
-import { Database } from './database.ts'
-import { randomUUID } from 'node:crypto'
 import { json } from './middlewares/json.ts'
 import { routes } from './routes.ts'
-
-type Users = {
-  id: number
-  name: string
-  email: string
-}[]
+import { extractQueryParams } from './utils/extract-query-params.ts'
 
 const server = http.createServer(async (req, res) => {
   const { method, url } = req
@@ -21,7 +14,11 @@ const server = http.createServer(async (req, res) => {
 
   if (route) {
     const routeParams = url?.match(route.path)
-    req.params = { ...routeParams?.groups }
+
+    const { query, ...params } = routeParams?.groups ? routeParams.groups : {}
+
+    req.params = params
+    req.query = query ? extractQueryParams(query) : {}
 
     return route.handler(req, res)
   }

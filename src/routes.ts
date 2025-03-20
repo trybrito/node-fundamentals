@@ -10,7 +10,17 @@ export const routes = [
     method: 'GET',
     path: buildRoutePath('/users'),
     handler(req: IncomingMessage, res: ServerResponse) {
-      const users = database.select('users')
+      const { search } = req.query
+
+      const users = database.select(
+        'users',
+        search
+          ? {
+              name: search,
+              email: search,
+            }
+          : null
+      )
 
       return res
         .setHeader('Content-type', 'application/json')

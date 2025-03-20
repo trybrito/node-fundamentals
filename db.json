@@ -1,14 +1,14 @@
 {
   "users": [
     {
-      "id": "58de246c-0168-4fea-82af-86836b1b7131",
-      "name": "Thiago",
-      "email": "thiago@mail.com"
-    },
-    {
       "id": "ca97a428-ad2c-4bcb-bf72-fac205bf3fad",
       "name": "James",
       "email": "james@mail.com"
+    },
+    {
+      "id": "7cdd7585-fe91-4e50-816e-4610ed47e25f",
+      "name": "James Gunn",
+      "email": "gunn@mail.com"
     }
   ]
 }
